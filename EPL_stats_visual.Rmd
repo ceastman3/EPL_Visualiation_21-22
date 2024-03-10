@@ -1,0 +1,34 @@
+---
+title: "Hw 2"
+author: "Connor Eastman"
+date: "2024-03-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(shiny)
+library(tidytuesdayR)
+library(tidyverse)
+```
+
+```{r}
+# tuesdata <- tidytuesdayR::tt_load('2023-04-04')
+# soccer <- tuesdata$soccer
+
+soccer <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-04/soccer21-22.csv')
+
+head(soccer, 10)
+```
+
+# Premier League Match Data: 2021-2022
+Data Retrieved from [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-04-04/readme.md)
+
+
+```{r}
+team_stats = soccer %>%
+  filter(soccer$HomeTeam == "Chelsea" | soccer$AwayTeam=="Chelsea")
+
+head(team_stats)
+```
+
