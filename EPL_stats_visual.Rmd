@@ -7,7 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+# install.packages("shiny", "shinyWidgets")
 library(shiny)
+library(shinyWidgets)
 library(tidyverse)
 library(ggplot2)
 
@@ -76,15 +78,18 @@ plot_stats = function(team_name, loc) {
 #### Shiny Application
 ```{r}
 ui = fluidPage(
+  titlePanel(h1("Premier League Records: 2021-2021 Season", style={'color:white;'})),
   sidebarLayout(
     sidebarPanel(
+      # img(src = "images/epl_logo.png", height = 70, width=200),
       selectInput("team", "Team", unique(soccer$HomeTeam)),
       radioButtons("location", "Location", c("Total" = "total",
                                              "Home" = "home",
                                              "Away" = "away"))
     ),
     mainPanel(
-      plotOutput("team_stats")
+      plotOutput("team_stats"),
+      setBackgroundColor("#3D195B")
     )
   )
 )
