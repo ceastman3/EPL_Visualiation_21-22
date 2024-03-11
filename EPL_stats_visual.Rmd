@@ -18,6 +18,7 @@ soccer <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tid
 Data Retrieved from [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2023/2023-04-04/readme.md)
 
 
+#### Data Manipulation
 ```{r}
 team_stats_Home = soccer %>%
   group_by(HomeTeam) %>%
@@ -47,6 +48,8 @@ complete_team_stats = complete_team_stats %>%
 # head(complete_team_stats)
 ```
 
+
+#### Plotting Function
 ```{r}
 plot_stats = function(team_name, loc) {
   wins = paste(loc, "_wins", sep="") 
@@ -70,7 +73,7 @@ plot_stats = function(team_name, loc) {
 ```
 
 
-
+#### Shiny Application
 ```{r}
 ui = fluidPage(
   sidebarLayout(
