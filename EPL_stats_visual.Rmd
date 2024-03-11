@@ -8,18 +8,10 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(shiny)
-library(tidytuesdayR)
 library(tidyverse)
 library(ggplot2)
-```
-
-```{r}
-# tuesdata <- tidytuesdayR::tt_load('2023-04-04')
-# soccer <- tuesdata$soccer
 
 soccer <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-04/soccer21-22.csv')
-
-head(soccer, 10)
 ```
 
 # Premier League Match Data: 2021-2022
@@ -39,43 +31,43 @@ team_stats_Home = soccer %>%
 team_stats_Away = soccer %>%
   group_by(AwayTeam) %>%
   summarise(
-    Away_wins = sum(FTR == "A"),
-    Away_losses = sum(FTR == "H"),
-    Away_draws = sum(FTR == "D")
+    away_wins = sum(FTR == "A"),
+    away_losses = sum(FTR == "H"),
+    away_draws = sum(FTR == "D")
   ) %>%
   rename(team_ID = AwayTeam)
 
 complete_team_stats <- full_join(team_stats_Home, team_stats_Away, by = "team_ID")
 
 complete_team_stats = complete_team_stats %>%
-  mutate(tot_wins = home_wins+Away_wins, 
-         tot_losses = home_losses+Away_losses, 
-         tot_draws = home_draws+Away_draws)
+  mutate(total_wins = home_wins+away_wins, 
+         total_losses = home_losses+away_losses, 
+         total_draws = home_draws+away_draws)
 
 # head(complete_team_stats)
 ```
 
 ```{r}
-plot_stats = function(team_name) {
+plot_stats = function(team_name, loc) {
+  wins = paste(loc, "_wins", sep="") 
+  losses = paste(loc, "_losses", sep="") 
+  draws = paste(loc, "_draws", sep="") 
+  
   team_data <- complete_team_stats %>%
     filter(team_ID == team_name) %>%
-    select(team_ID, tot_wins, tot_losses, tot_draws) %>%
+    select(team_ID, Wins = wins, Losses = losses, Draws = draws) %>%
     gather(key = "Statistic", value = "Count", -team_ID)
   
   ggplot(team_data, aes(x = Statistic, y = Count, fill = Statistic)) +
     geom_bar(stat = "identity", alpha=1, show.legend = FALSE) +
     theme_minimal() +
-    labs(title = paste("Total Wins, Losses, and Draws for", team_name),
+    labs(title = paste(toupper(loc), "Wins, Losses, and Draws for", team_name),
          x = "Outcome",
          y = "Count") +
-    # scale_fill_brewer(palette = "Set1") +
-    scale_x_discrete(labels = c("tot_wins" = "Wins", "tot_losses" = "Losses", "tot_draws" = "Draws"))
+    scale_x_discrete(labels = c(wins = "Wins", losses = "Losses", draws = "Draws"))
 }
 
-# plot_stats("Chelsea")
-
 ```
-
 
 
 
@@ -83,7 +75,10 @@ plot_stats = function(team_name) {
 ui = fluidPage(
   sidebarLayout(
     sidebarPanel(
-      selectInput("team", "Team", unique(soccer$HomeTeam))
+      selectInput("team", "Team", unique(soccer$HomeTeam)),
+      radioButtons("location", "Location", c("Total" = "total",
+                                             "Home" = "home",
+                                             "Away" = "away"))
     ),
     mainPanel(
       plotOutput("team_stats")
@@ -93,7 +88,8 @@ ui = fluidPage(
 
 server = function(input, output) {
   output$team_stats = renderPlot(
-    plot_stats(input$team)
+    plot_stats(input$team,
+               input$location)
     
   )
 }
