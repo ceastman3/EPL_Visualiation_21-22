@@ -81,7 +81,7 @@ ui = fluidPage(
   titlePanel(h1("Premier League Records: 2021-2021 Season", style={'color:white;'})),
   sidebarLayout(
     sidebarPanel(
-      # img(src = "images/epl_logo.png", height = 70, width=200),
+      # img(src = "epl_logo.png", height = 70, width=200),
       selectInput("team", "Team", unique(soccer$HomeTeam)),
       radioButtons("location", "Location", c("Total" = "total",
                                              "Home" = "home",
